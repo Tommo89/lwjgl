@@ -100,7 +100,7 @@ final class MacOSXDisplay implements DisplayImplementation {
 		
 	}
 
-	private native ByteBuffer nCreateWindow(int x, int y, int width, int height, boolean fullscreen, boolean undecorated, boolean resizable, boolean parented, boolean enableFullscreenModeAPI, boolean enableHighDPI, ByteBuffer peer_info_handle, ByteBuffer window_handle) throws LWJGLException;
+	private native ByteBuffer nCreateWindow(int x, int y, int width, int height, boolean fullscreen, boolean undecorated, boolean resizable, boolean parented, boolean enableFullscreenModeAPI, boolean enableHighDPI, int preferredScreen, ByteBuffer peer_info_handle, ByteBuffer window_handle) throws LWJGLException;
 
 	private native Object nGetCurrentDisplayMode();
 	
@@ -133,6 +133,7 @@ final class MacOSXDisplay implements DisplayImplementation {
 	public void createWindow(final DrawableLWJGL drawable, DisplayMode mode, Canvas parent, int x, int y) throws LWJGLException {
 		boolean fullscreen = Display.isFullscreen();
 		boolean resizable = Display.isResizable();
+		int preferredScreen = Display.getPreferredScreen();
 		boolean parented = (parent != null) && !fullscreen;
 		
 		// OS X fullscreen mode API is only available on OS X 10.7+
@@ -154,10 +155,9 @@ final class MacOSXDisplay implements DisplayImplementation {
 		ByteBuffer window_handle = parented ? ((MacOSXCanvasPeerInfo)peer_info).window_handle : window;
 		
 		try {
-			
 			window = nCreateWindow(x, y, mode.getWidth(), mode.getHeight(),
 					fullscreen, isUndecorated(), resizable,
-					parented, enableFullscreenModeAPI, enableHighDPI, peer_handle, window_handle);
+					parented, enableFullscreenModeAPI, enableHighDPI, preferredScreen, peer_handle, window_handle);
             
 			if (fullscreen) {
 				// when going to fullscreen viewport is set to screen size by Cocoa, ignore this value

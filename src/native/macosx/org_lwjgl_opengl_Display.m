@@ -107,7 +107,9 @@ static NSUInteger lastModifierFlags = 0;
 				default_window_mask |= NSResizableWindowMask;
 			}
 			
-			window_info->window = [[MacOSXKeyableWindow alloc] initWithContentRect:window_info->display_rect styleMask:default_window_mask backing:NSBackingStoreBuffered defer:NO];
+			NSScreen* screen = [[NSScreen screens] objectAtIndex:window_info->preferredScreen];
+
+			window_info->window = [[MacOSXKeyableWindow alloc] initWithContentRect:window_info->display_rect styleMask:default_window_mask backing:NSBackingStoreBuffered defer:NO screen:screen];
 			
 			[window_info->window setContentView:window_info->view];
 			[window_info->window setContentView:window_info->view]; // call twice to fix issue
@@ -669,7 +671,7 @@ JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetTitle(JNIEnv *env
 	[window_info->window performSelectorOnMainThread:@selector(setTitle:) withObject:title waitUntilDone:NO];
 }
 
-JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIEnv *env, jobject this, jint x, jint y, jint width, jint height, jboolean fullscreen, jboolean undecorated, jboolean resizable, jboolean parented, jboolean enableFullscreenModeAPI, jboolean enableHighDPI, jobject peer_info_handle, jobject window_handle) {
+JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIEnv *env, jobject this, jint x, jint y, jint width, jint height, jboolean fullscreen, jboolean undecorated, jboolean resizable, jboolean parented, jboolean enableFullscreenModeAPI, jboolean enableHighDPI, jint preferredScreen, jobject peer_info_handle, jobject window_handle) {
 	
 	pool = [[NSAutoreleasePool alloc] init];
 	
@@ -681,6 +683,7 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIE
 		window_info->undecorated = undecorated;
 		window_info->parented = parented;
         window_info->enableFullscreenModeAPI = enableFullscreenModeAPI;
+        window_info->preferredScreen = preferredScreen;
 		
 		return window_handle;
 	}
@@ -701,6 +704,9 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIE
 	window_info->parented = parented;
 	window_info->enableFullscreenModeAPI = enableFullscreenModeAPI;
 	window_info->enableHighDPI = enableHighDPI;
+    window_info->preferredScreen = preferredScreen;
+
+    printf("LOLZOR IS %d", preferredScreen );
 	
 	peer_info->window_info = window_info;
 	peer_info->isWindowed = true;

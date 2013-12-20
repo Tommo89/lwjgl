@@ -106,6 +106,9 @@ public final class Display {
 	/** Fullscreen */
 	private static boolean fullscreen;
 
+	/**preferred screen */
+	private static int preferredScreen = 0;
+
 	/** Swap interval */
 	private static int swap_interval;
 
@@ -425,6 +428,13 @@ public final class Display {
 		}
 	}
 
+	/** Return the number of screens connected to this computer */
+	public static int getScreenCount() {
+		synchronized (GlobalLock.lock) {
+			return getScreenCountInternal();
+		}
+	}
+
 	/**
 	 * Set the parent of the Display. If parent is null, the Display will appear as a top level window.
 	 * If parent is not null, the Display is made a child of the parent. A parent's isDisplayable() must be true when
@@ -476,6 +486,16 @@ public final class Display {
 	}
 
 	/**
+	 * Sets the preferred screen for the window where the display is shown, and moves the window to that screen.
+	 *
+	 * @throws LWJGLException If fullscreen is true, and the current DisplayMode instance is not
+	 *                        from getAvailableDisplayModes() or if the mode switch fails.
+	 */
+	public static void setPreferredScreen( int screen ) throws LWJGLException {
+		setPreferredScreenInternal( screen );
+	}
+
+	/**
 	 * Set the mode of the context. If no context has been created through create(),
 	 * the mode will apply when create() is called. If mode.isFullscreenCapable() is true, the context will become
 	 * a fullscreen context and the display mode is switched to the mode given by getDisplayMode(). If
@@ -519,10 +539,26 @@ public final class Display {
 		}
 	}
 
+	private static void setPreferredScreenInternal(int screen ) throws LWJGLException {
+		synchronized( GlobalLock.lock ) {
+			preferredScreen = screen;
+		}
+	}
+
+	private static int getScreenCountInternal(){
+		return 1;
+	}
+
 	/** @return whether the Display is in fullscreen mode */
 	public static boolean isFullscreen() {
 		synchronized ( GlobalLock.lock ) {
 			return fullscreen && current_mode.isFullscreenCapable();
+		}
+	}
+
+	public static int getPreferredScreen() {
+		synchronized ( GlobalLock.lock ) {
+			return preferredScreen;
 		}
 	}
 

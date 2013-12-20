@@ -85,6 +85,8 @@ typedef struct {
 	jboolean enableHighDPI;
 	
 	jboolean resized;
+
+	jint preferredScreen;
 	
 } MacOSXWindowInfo;
 
