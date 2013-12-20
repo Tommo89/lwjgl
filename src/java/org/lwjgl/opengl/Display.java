@@ -431,7 +431,7 @@ public final class Display {
 	/** Return the number of screens connected to this computer */
 	public static int getScreenCount() {
 		synchronized (GlobalLock.lock) {
-			return getScreenCountInternal();
+			return display_impl.getScreenCount();
 		}
 	}
 
@@ -491,9 +491,16 @@ public final class Display {
 	 * @throws LWJGLException If fullscreen is true, and the current DisplayMode instance is not
 	 *                        from getAvailableDisplayModes() or if the mode switch fails.
 	 */
-	public static void setPreferredScreen( int screen ) throws LWJGLException {
-		setPreferredScreenInternal( screen );
+	public static void setPreferredScreen(int screen ) throws LWJGLException {
+		synchronized( GlobalLock.lock ) {
+			if( screen >= getScreenCount() )
+				throw new LWJGLException("Screen not available");
+
+			preferredScreen = screen;
+			display_impl.setPreferredScreen(screen);
+		}
 	}
+
 
 	/**
 	 * Set the mode of the context. If no context has been created through create(),
@@ -537,16 +544,6 @@ public final class Display {
 				}
 			}
 		}
-	}
-
-	private static void setPreferredScreenInternal(int screen ) throws LWJGLException {
-		synchronized( GlobalLock.lock ) {
-			preferredScreen = screen;
-		}
-	}
-
-	private static int getScreenCountInternal(){
-		return 1;
 	}
 
 	/** @return whether the Display is in fullscreen mode */

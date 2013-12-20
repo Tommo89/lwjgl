@@ -86,6 +86,10 @@ interface DisplayImplementation extends InputImplementation {
 	 */
 	String getVersion();
 
+	void setPreferredScreen( int screen ) throws LWJGLException;
+
+	int getScreenCount();
+
 	/**
 	 * Initialize and return the current display mode.
 	 */

@@ -1170,6 +1170,14 @@ final class WindowsDisplay implements DisplayImplementation {
 		setResizable(resizable, true);
 	}
 
+	public void setPreferredScreen( int screen ) throws LWJGLException {
+
+	}
+
+	public int getScreenCount() {
+		return 1;
+	}
+
 	private void setResizable(boolean resizable, boolean defer) {
 		this.resized = false;
 		this.resizable = resizable;

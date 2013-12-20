@@ -1437,6 +1437,14 @@ final class LinuxDisplay implements DisplayImplementation {
 		return window_height;
 	}
 
+	public void setPreferredScreen( int screen ) throws LWJGLException {
+
+	}
+
+	public int getScreenCount() {
+		return 1;
+	}
+
 	public boolean isInsideWindow() {
 		return mouseInside;
 	}

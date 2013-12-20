@@ -123,6 +123,8 @@ final class MacOSXDisplay implements DisplayImplementation {
 	private native int nGetWidth(ByteBuffer window_handle);
 	
 	private native int nGetHeight(ByteBuffer window_handle);
+
+	private native int nGetScreenCount();
 	
 	private native boolean nIsNativeMode(ByteBuffer peer_info_handle);
     
@@ -223,6 +225,14 @@ final class MacOSXDisplay implements DisplayImplementation {
 
 	public int getGammaRampLength() {
 		return GAMMA_LENGTH;
+	}
+
+	public void setPreferredScreen( int screen ) throws LWJGLException {
+
+	}
+
+	public int getScreenCount(){
+		return nGetScreenCount();
 	}
 
 	public native void setGammaRamp(FloatBuffer gammaRamp) throws LWJGLException;

@@ -618,6 +618,10 @@ JNIEXPORT jint JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nGetHeight(JNIEnv *en
 	return height;
 }
 
+JNIEXPORT jint JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nGetScreenCount(JNIEnv *env, jobject this) {
+	return [[NSScreen screens] count];
+}
+
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetResizable(JNIEnv *env, jobject this, jobject window_handle, jboolean resizable) {
 	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
 	NSUInteger style_mask = [window_info->window styleMask];
