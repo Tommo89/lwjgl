@@ -104,7 +104,9 @@ final class MacOSXDisplay implements DisplayImplementation {
 
 	private native Object nGetCurrentDisplayMode();
 
-	private native void nSetPreferredScreen( ByteBuffer window_handle, int screen );
+	private native void nSetScreen( ByteBuffer window_handle, int screen );
+
+	private native int nGetScreen( ByteBuffer window_handle );
 	
 	private native void nGetDisplayModes(Object modesList);
 	
@@ -229,9 +231,13 @@ final class MacOSXDisplay implements DisplayImplementation {
 		return GAMMA_LENGTH;
 	}
 
-	public void setPreferredScreen( int screen ) throws LWJGLException {
+	public void setScreen( int screen ) throws LWJGLException {
 		if( Display.isCreated() )
-			nSetPreferredScreen( window, screen );
+			nSetScreen( window, screen );
+	}
+
+	public int getScreen() {
+		return nGetScreen( window );
 	}
 
 	public int getScreenCount(){

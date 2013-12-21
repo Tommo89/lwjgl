@@ -491,16 +491,22 @@ public final class Display {
 	 * @throws LWJGLException If fullscreen is true, and the current DisplayMode instance is not
 	 *                        from getAvailableDisplayModes() or if the mode switch fails.
 	 */
-	public static void setPreferredScreen(int screen ) throws LWJGLException {
+	public static void setScreen(int screen ) throws LWJGLException {
 		synchronized( GlobalLock.lock ) {
 			if( screen >= getScreenCount() )
 				throw new LWJGLException("Screen not available");
 
 			preferredScreen = screen;
-			display_impl.setPreferredScreen(screen);
+			display_impl.setScreen(screen);
 		}
 	}
 
+	public static int getScreen() {
+		if( isCreated() )
+			return display_impl.getScreen();
+		else
+			return preferredScreen;
+	}
 
 	/**
 	 * Set the mode of the context. If no context has been created through create(),

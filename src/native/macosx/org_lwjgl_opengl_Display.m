@@ -622,19 +622,31 @@ JNIEXPORT jint JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nGetScreenCount(JNIEn
 	return [[NSScreen screens] count];
 }
 
-JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetPreferredScreen(JNIEnv *env, jobject this, jobject window_handle, jint preferredScreen ) {
+JNIEXPORT jint JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nGetScreen(JNIEnv *env, jobject this, jobject window_handle) {
+	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
+
+	int idx = [[NSScreen screens] indexOfObject: [window_info->window screen]];
+
+	return ( idx == NSNotFound ) ? -1 : idx;
+}
+
+
+JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetScreen(JNIEnv *env, jobject this, jobject window_handle, jint targetScreen ) {
 	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
 	
-	if( window_info->window && window_info->preferredScreen != preferredScreen ) {
+	int currentIdx = [[NSScreen screens] indexOfObject: [window_info->window screen]];
+
+	if( window_info->window && currentIdx != targetScreen ) {
 	
-		window_info->preferredScreen = preferredScreen;
-		NSScreen* screen = [[NSScreen screens] objectAtIndex:preferredScreen];
+		NSScreen* screen = [[NSScreen screens] objectAtIndex:targetScreen];
 		NSWindow* window = window_info->window;
 		NSRect windowFrame = [window frame];
 		NSRect screenFrame = [screen frame];
 
 		if( window_info->fullscreen )
 			[window toggleFullScreen: nil];
+
+		while( [window inLiveResize] );
 
 		//easy case, center it in the required screen
 		if( !window_info->fullscreen ) {

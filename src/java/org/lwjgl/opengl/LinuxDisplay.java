@@ -1437,9 +1437,14 @@ final class LinuxDisplay implements DisplayImplementation {
 		return window_height;
 	}
 
-	public void setPreferredScreen( int screen ) throws LWJGLException {
+	public void setScreen( int screen ) throws LWJGLException {
 
 	}
+
+	public int getScreen() {
+		return 0;
+	}
+
 
 	public int getScreenCount() {
 		return 1;
