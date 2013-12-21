@@ -622,6 +622,33 @@ JNIEXPORT jint JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nGetScreenCount(JNIEn
 	return [[NSScreen screens] count];
 }
 
+JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetPreferredScreen(JNIEnv *env, jobject this, jobject window_handle, jint preferredScreen ) {
+	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
+	
+	if( window_info->window && window_info->preferredScreen != preferredScreen ) {
+	
+		window_info->preferredScreen = preferredScreen;
+		NSScreen* screen = [[NSScreen screens] objectAtIndex:preferredScreen];
+		NSWindow* window = window_info->window;
+		NSRect windowFrame = [window frame];
+		NSRect screenFrame = [screen frame];
+
+		if( window_info->fullscreen )
+			[window toggleFullScreen: nil];
+
+		//easy case, center it in the required screen
+		if( !window_info->fullscreen ) {
+			CGFloat xPos = screenFrame.origin.x + (screenFrame.size.width - windowFrame.size.width)/2;
+			CGFloat yPos = screenFrame.origin.y + (screenFrame.size.height - windowFrame.size.height)/2;
+
+			[window setFrame:NSMakeRect(xPos, yPos, windowFrame.size.width, windowFrame.size.height) display:YES];
+		}
+
+		if( window_info->fullscreen )
+			[window toggleFullScreen: nil];
+	}
+}
+
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetResizable(JNIEnv *env, jobject this, jobject window_handle, jboolean resizable) {
 	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
 	NSUInteger style_mask = [window_info->window styleMask];
@@ -709,8 +736,6 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIE
 	window_info->enableFullscreenModeAPI = enableFullscreenModeAPI;
 	window_info->enableHighDPI = enableHighDPI;
     window_info->preferredScreen = preferredScreen;
-
-    printf("LOLZOR IS %d", preferredScreen );
 	
 	peer_info->window_info = window_info;
 	peer_info->isWindowed = true;

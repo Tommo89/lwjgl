@@ -103,6 +103,8 @@ final class MacOSXDisplay implements DisplayImplementation {
 	private native ByteBuffer nCreateWindow(int x, int y, int width, int height, boolean fullscreen, boolean undecorated, boolean resizable, boolean parented, boolean enableFullscreenModeAPI, boolean enableHighDPI, int preferredScreen, ByteBuffer peer_info_handle, ByteBuffer window_handle) throws LWJGLException;
 
 	private native Object nGetCurrentDisplayMode();
+
+	private native void nSetPreferredScreen( ByteBuffer window_handle, int screen );
 	
 	private native void nGetDisplayModes(Object modesList);
 	
@@ -228,7 +230,8 @@ final class MacOSXDisplay implements DisplayImplementation {
 	}
 
 	public void setPreferredScreen( int screen ) throws LWJGLException {
-
+		if( Display.isCreated() )
+			nSetPreferredScreen( window, screen );
 	}
 
 	public int getScreenCount(){
